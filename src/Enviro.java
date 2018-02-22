@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Random;
@@ -62,14 +60,14 @@ public class Enviro extends JFrame {
             }
 
             @Override
-            public void mouseEntered(MouseEvent e)
-            {
-                //findMouse.run();
-            }
+            public void mouseEntered(MouseEvent e) {}
             @Override
-            public void mouseExited(MouseEvent e)
+            public void mouseExited(MouseEvent e) {}
+            @Override
+            public void mouseMoved(MouseEvent e)
             {
-
+                mx = e.getX();
+                my = e.getY();
             }
         });
 
@@ -88,18 +86,9 @@ public class Enviro extends JFrame {
         }
         @Override
         public void run() {
-            PointerInfo a = MouseInfo.getPointerInfo();
-            Point b = a.getLocation();
-            mx = b.getX();
-            my = b.getY();
             mrad = Math.atan2(my, mx);
             if(mhold)
             {
-                //if(line!=null)
-                //    win.remove(line);
-                //line = new Line(middlex, middley, (int)mx, (int)my);
-                //line.setBackground(Color.red);
-                //win.add(line, 0);
                 System.out.println(mx);
                 ///////use e.getX() and such in the mouse listener class!
                 //////also use mouse movement listener
