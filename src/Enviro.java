@@ -103,6 +103,7 @@ public class Enviro extends JFrame {
                 System.out.println(mx);
                 ///////use e.getX() and such in the mouse listener class!
                 //////also use mouse movement listener
+                //////MouseInfo.getPointerInfo gets the position of the mouse on the desktop.
             }
         }
     }
