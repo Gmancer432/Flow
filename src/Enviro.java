@@ -1,14 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Enviro extends JFrame {
+public class Enviro extends JFrame implements MouseListener, MouseMotionListener{
 
     Rectangle map = new Rectangle(-500, -500, 5000, 5000);
 
@@ -16,11 +16,11 @@ public class Enviro extends JFrame {
     double my = 375;
     final int middlex;
     final int middley;
-    int middledist = 0;
+    int middledist = 0;//distance from middle
     double mrad = 0;
 
-    boolean mon = false;
-    boolean mhold = false;
+    boolean mon = false;//mouse on screen
+    boolean mhold = false;//mouse is held
     Timer t = new Timer();
 
     public Enviro()
@@ -50,31 +50,46 @@ public class Enviro extends JFrame {
         repaint();
 
         setFocusable(true);
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                mhold=true;
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                mhold=false;
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e)
-            {
-                //findMouse.run();
-            }
-            @Override
-            public void mouseExited(MouseEvent e)
-            {
-
-            }
-        });
+        addMouseListener(this);
+        addMouseMotionListener(this);
 
         setVisible(true);
         t.schedule(new MyTimerTask(this), 0, 100);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        System.out.println(e.getX());
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
     }
 
     class MyTimerTask extends TimerTask
@@ -88,22 +103,9 @@ public class Enviro extends JFrame {
         }
         @Override
         public void run() {
-            PointerInfo a = MouseInfo.getPointerInfo();
-            Point b = a.getLocation();
-            mx = b.getX();
-            my = b.getY();
             mrad = Math.atan2(my, mx);
             if(mhold)
             {
-                //if(line!=null)
-                //    win.remove(line);
-                //line = new Line(middlex, middley, (int)mx, (int)my);
-                //line.setBackground(Color.red);
-                //win.add(line, 0);
-                System.out.println(mx);
-                ///////use e.getX() and such in the mouse listener class!
-                //////also use mouse movement listener
-                //////MouseInfo.getPointerInfo gets the position of the mouse on the desktop.
             }
         }
     }
