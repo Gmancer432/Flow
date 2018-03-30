@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -10,103 +9,100 @@ import java.util.TimerTask;
 
 public class Enviro extends JFrame implements MouseListener, MouseMotionListener{
 
-    Rectangle map = new Rectangle(-500, -500, 5000, 5000);
-
-    double mx = 500;
+    double mx = 500;//mouse pos
     double my = 375;
-    final int middlex;
+    final int middlex;//middle of screen
     final int middley;
-    int middledist = 0;//distance from middle
-    double mrad = 0;
+    double mrad = 0;//angle of mouse in radians
 
-    boolean mon = false;//mouse on screen
     boolean mhold = false;//mouse is held
     Timer t = new Timer();
+
+    final int screenWidth = 1400;
+    final int screenHeight = 1000;
+
+    GRectangle camera;
+    GRectangle map = new GRectangle(screenWidth*99/-2, screenHeight*99/-2, screenWidth*100, screenHeight*100);
 
     public Enviro()
     {
         super("Flow");
-        setSize(1000, 750);
+        setSize(1400, 1000);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
+        setResizable(false);
 
         middlex = getWidth()/2;
         middley = getHeight()/2;
 
         map.setBackground(Color.BLACK);
         Random gen = new Random();
-        for(int i = 0; i<1000; i++)
+        for(int i = 0; i<10000; i++)///WORK ON CHUNKS, CHUNK LOADING, AND RENDER DISTANCE
         {
-            Rectangle rec = new Rectangle(gen.nextInt(5000), gen.nextInt(5000), gen.nextInt(10)+1, gen.nextInt(10)+1);
+            GRectangle rec = new GRectangle(gen.nextInt(map.getWidth()), gen.nextInt(map.getHeight()), gen.nextInt(10)+1, gen.nextInt(10)+1);
             rec.setBackground(Color.GRAY);
+            rec.setVisible(false);
             map.add(rec);
         }
         add(map);
 
-        Rectangle rec = new Rectangle(middlex-5+500, middley-5+500, 10, 10);
-        rec.setBackground(Color.RED);
-        map.add(rec, 0);
-        repaint();
+        camera = new GRectangle(0,0,getWidth(), getHeight());
+        camera.setVisible(false);
+        map.add(camera);
+        camera.setLocation((map.getWidth()-getWidth())/2, (map.getHeight()-getHeight())/2);
 
         setFocusable(true);
         addMouseListener(this);
         addMouseMotionListener(this);
 
         setVisible(true);
-        t.schedule(new MyTimerTask(this), 0, 100);
+        int fps = 50;
+        t.schedule(new MyTimerTask(), 0, 1000/fps);
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
+    public void mouseClicked(MouseEvent e) {}
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        mhold=true;
+        mx=e.getX();
+        my=e.getY();
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        mhold=false;
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
+    public void mouseEntered(MouseEvent e) {}
 
     @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
+    public void mouseExited(MouseEvent e) {}
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        System.out.println(e.getX());
+        mx=e.getX();
+        my=e.getY();
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
-
-    }
+    public void mouseMoved(MouseEvent e) {}
 
     class MyTimerTask extends TimerTask
     {
-        Line line;
-        Enviro win;
-
-        public MyTimerTask(Enviro win)
-        {
-            this.win = win;
-        }
         @Override
         public void run() {
-            mrad = Math.atan2(my, mx);
             if(mhold)
             {
+                double speed = Math.sqrt(Math.pow(mx-middlex,2)+Math.pow(my-middley,2))/10;
+                mrad = Math.atan2(mx-middlex, my-middley);
+                camera.setLocation((int)Math.round(speed*Math.sin(mrad))+camera.getX(), (int)Math.round(speed*Math.cos(mrad))+camera.getY());
             }
+            map.setLocation(camera.getX()*(-1), camera.getY()*(-1));
+            repaint();
         }
     }
 }

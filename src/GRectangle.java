@@ -1,23 +1,23 @@
 import javax.swing.*;
 import java.awt.*;
 
-/** resources.Rectangle Supplier Class
+/** resources.GRectangle Supplier Class
  * Author: David D. Riley
  * Date: April, 2004
  */
-public class Rectangle extends JComponent  {
+public class GRectangle extends JComponent  {
 
     /** post:   getX() == x  and  getY() == y
      *          and  getWidth() == w  and getHeight() == h
      *          and  getBackground() == Color.black
      */
-	public Rectangle(int x, int y, int w, int h)  {
+	public GRectangle(int x, int y, int w, int h)  {
         super();
 		setBounds(x, y, w, h);
         setBackground(Color.black);
 	}
 
-    /** post:   this method draws a filled resources.Rectangle
+    /** post:   this method draws a filled resources.GRectangle
      *          and  the upper left corner is (getX(), getY()) 
      *          and  the rectangle's dimensions are getWidth() and getHeight()
      *          and  the rectangle's color is getBackground()
