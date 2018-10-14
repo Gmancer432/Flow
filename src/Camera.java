@@ -1,24 +1,14 @@
+import javax.swing.*;
 
+public class Camera {
 
-public class Camera extends GRectangle {
+    Map win;
 
-    double dx = 0;
-    double dy = 0;
-
-    public Camera(int x, int y, int w, int h)
-    {
-        super(x,y,w,h);
+    public Camera (Map win){
+        this.win = win;
     }
 
-    public void setSpeed(double dx, double dy)
-    {
-        this.dx = dx;
-        this.dy = dy;
-    }
-
-    public void move()
-    {
-        setLocation(getX() + (int)dx, getY() + (int)dy);
+    public void incLocation(int x, int y){
     }
 
 }

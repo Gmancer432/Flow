@@ -9,26 +9,18 @@ import java.util.TimerTask;
 
 public class Enviro extends JFrame implements MouseListener, MouseMotionListener{
 
-    double mx = 500;//mouse pos
-    double my = 375;
-    final int middlex;//middle of screen
-    final int middley;
-    double mrad = 0;//angle of mouse in radians
-
     boolean mhold = false;//mouse is held
     Timer t = new Timer();
 
-    final int screenWidth = 1400;
-    final int screenHeight = 1000;
 
-    Camera camera;
-    int cameraMidX;
-    int cameraMidY;
-    GRectangle map = new GRectangle(screenWidth*9/-2, screenHeight*9/-2, screenWidth*10, screenHeight*10);///WORK ON CHUNKS, CHUNK LOADING, AND RENDER DISTANCE
+    Map map = new Map();
 
-    BodySeg body;
+    Head body;
+    MouseTracker mouse;
+
     BodySeg[] spine = new BodySeg[4];
     int bodySize = 50;
+
 
     public Enviro()
     {
@@ -39,28 +31,15 @@ public class Enviro extends JFrame implements MouseListener, MouseMotionListener
         setLayout(null);
         setResizable(false);
 
-        middlex = getWidth()/2;
-        middley = getHeight()/2;
+        GRectangle screen = new GRectangle(50, 50, 1000, 1000);
+        screen.setBackground(Color.BLACK);
+        add(screen, 0);
 
-        map.setBackground(Color.BLACK);
-        Random gen = new Random();
-        for(int i = 0; i<2000; i++)
-        {
-            GRectangle rec = new GRectangle(gen.nextInt(map.getWidth()), gen.nextInt(map.getHeight()), gen.nextInt(10)+1, gen.nextInt(10)+1);
-            rec.setBackground(Color.GRAY);
-            map.add(rec);
-        }
-        add(map);
 
-        camera = new Camera(0,0,getWidth(), getHeight());
-        camera.setVisible(false);
-        map.add(camera);
-        camera.setLocation((map.getWidth()-getWidth())/2, (map.getHeight()-getHeight())/2);
-        findCameraMiddle();
-
-        body = new BodySeg(camera.getX()+(camera.getWidth()-bodySize)/2, camera.getY()+(camera.getHeight()-bodySize)/2, bodySize, bodySize);
-        body.setBackground(Color.WHITE);
-        map.add(body, 0);
+        body = new Head();
+        mouse = new MouseTracker(body);
+        screen.add(body, 0);
+        body.setLocation(getWidth()/2, getHeight()/2);
 
         setFocusable(true);
         addMouseListener(this);
@@ -69,12 +48,6 @@ public class Enviro extends JFrame implements MouseListener, MouseMotionListener
         setVisible(true);
         int fps = 50;
         t.schedule(new MyTimerTask(), 0, 1000/fps);
-    }
-
-    public void findCameraMiddle()
-    {
-        cameraMidX = camera.getX() + camera.getWidth()/2;
-        cameraMidY = camera.getY() + camera.getHeight()/2;
     }
 
     public Point findOvalMid(Oval o)
@@ -88,8 +61,8 @@ public class Enviro extends JFrame implements MouseListener, MouseMotionListener
     @Override
     public void mousePressed(MouseEvent e) {
         mhold=true;
-        mx=e.getX();
-        my=e.getY();
+        mouse.setX(e.getX());
+        mouse.setY(e.getY());
     }
 
     @Override
@@ -105,8 +78,8 @@ public class Enviro extends JFrame implements MouseListener, MouseMotionListener
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        mx=e.getX();
-        my=e.getY();
+        mouse.setX(e.getX());
+        mouse.setY(e.getY());
     }
 
     @Override
@@ -116,27 +89,11 @@ public class Enviro extends JFrame implements MouseListener, MouseMotionListener
     {
         @Override
         public void run() {
-            Point bodyMid = findOvalMid(body);
-            int bmx = (int)bodyMid.getX()-camera.getX();//finds pos of body on screen
-            int bmy = (int)bodyMid.getY()-camera.getY();
-
-            double dx;
-            double dy;
-            if(mhold)//find movement of body in relation to mouse
-            {
-                dx = (mx-bmx)/100.00;
-                dy = (my-bmy)/100.00;
-                body.addSpeed(dx,dy);
+            if(mhold){
+                mouse.update();
+                body.updateSpeed();
             }
             body.move();
-
-            dx = (bmx-middlex)/10.00;
-            dy = (bmy-middley)/10.00;
-            camera.setSpeed(dx,dy);
-            camera.move();
-
-            findCameraMiddle();
-            map.setLocation(camera.getX()*(-1), camera.getY()*(-1));
             repaint();
         }
     }
